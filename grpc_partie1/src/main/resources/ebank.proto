@@ -1,0 +1,93 @@
+syntax="proto3";
+option java_package = "me.grpc.stubs";
+import "google/protobuf/empty.proto";
+service BanqueService {
+  // unary model
+  rpc convert(ConvertCurrencyRequest) returns(ConvertCurrencyResponse);
+  rpc getAccount(GetAccountRequest) returns(GetAccountResponse);
+  rpc getListAccount(GetListAccountsRequest) returns(GetListAccountsResponse);
+
+  // Server Streaming model
+  rpc getStreamOfAccountTransactions(GetStreamOfAccountTransactionRequest) returns(stream AccountTransaction);
+
+  // Client Streaming model
+  rpc submitStreamOfTransaction(stream AccountTransaction) returns(PerformStreamOfTransactionsResponse);
+
+  // Bidirectional Streaming model
+  rpc executeStreamOfTransaction(stream AccountTransaction) returns(stream AccountTransaction);
+  rpc submitTransaction(AccountTransaction) returns (google.protobuf.Empty);
+}
+
+enum  AccountStatus{
+  ACCOUNT_STATUS_UNKNOWN = 0;
+  ACCOUNT_STATUS_ACTIVATED = 1;
+  ACCCOUNT_STATUS_SUSPENDED = 2;
+  ACCOUNT_STATUS_PENDING = 3;
+  ACCOUNT_STATUS_CLOSED = 4;
+
+}
+
+enum  TransactionType{
+  DEBIT = 0; CREDIT = 1;
+}
+
+enum TransactionStatus{
+  PENDING = 0;
+  EXECUTED = 1;
+  REJECTED = 2;
+}
+
+enum AccountType{
+  CURRENT_ACCOUNT = 0;
+  SAVING_ACCOUNT = 1;
+}
+
+message Account{
+  string accountId = 1;
+  double balance = 2;
+  int64 createdAt = 3;
+  AccountStatus status = 4;
+  AccountType type = 5;
+  string currency = 6;
+}
+
+message AccountTransaction{
+  string transactionId=1;
+  string accountId=2;
+  int64 transactionDate=3;
+  double amount=4;
+  TransactionType type=5;
+  TransactionStatus status=6;
+}
+
+message ConvertCurrencyRequest{
+  double amount=1;
+  string currencyFrom=2;
+  string currencyTo=3;
+}
+
+message ConvertCurrencyResponse{
+  double amount=1;
+  string currencyFrom=2;
+  string currencyTo=3;
+  double result=4;
+}
+message GetAccountRequest {
+  string id=1;
+}
+message GetAccountResponse {
+  Account account=1;
+}
+message GetListAccountsRequest{}
+message GetListAccountsResponse {
+  repeated Account accounts=1;
+}
+message GetStreamOfAccountTransactionRequest{
+  string accountId=1;
+}
+message PerformStreamOfTransactionsResponse{
+  int64 numberOfPerformedTransactions=1;
+  double totalAmountOfPerformedTransactions=2;
+  double totalAmountOfPerformedDebitTransactions=3;
+  double totalAmountOfPerformedCreditTransactions=4;
+}
