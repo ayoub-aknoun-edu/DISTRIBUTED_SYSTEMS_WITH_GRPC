@@ -14,6 +14,7 @@ public class GameImpl extends GameGrpc.GameImplBase {
     public GameImpl() {
         Random random = new Random();
         secretNumber = random.nextInt(1000) + 1;
+        System.out.println("secret number is "+secretNumber);
     }
 
     @Override
@@ -29,9 +30,9 @@ public class GameImpl extends GameGrpc.GameImplBase {
             gameEnded = true;
             responseObserver.onNext(GameOuterClass.GuessResponse.newBuilder().setMessage("BRAVO vous avez gagné").build());
         } else if (guess < secretNumber) {
-            responseObserver.onNext(GameOuterClass.GuessResponse.newBuilder().setMessage("Votre nombre est plus grand").build());
-        } else {
             responseObserver.onNext(GameOuterClass.GuessResponse.newBuilder().setMessage("Votre nombre est plus petit").build());
+        } else {
+            responseObserver.onNext(GameOuterClass.GuessResponse.newBuilder().setMessage("Votre nombre est plus grand").build());
         }
 
         responseObserver.onCompleted();
